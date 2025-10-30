@@ -17,12 +17,12 @@ async function setupDatabase() {
     console.log('\n🔧 Setting up database...\n');
 
     // Create UUID extension
-    console.log('1/6 Creating UUID extension...');
+    console.log('1/7 Creating UUID extension...');
     await pool.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
     console.log('   ✅ UUID extension ready');
 
     // Create app_user table
-    console.log('2/6 Creating app_user table...');
+    console.log('2/7 Creating app_user table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS app_user (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -34,7 +34,7 @@ async function setupDatabase() {
     console.log('   ✅ app_user table created');
 
     // Create player table
-    console.log('3/6 Creating player table...');
+    console.log('3/7 Creating player table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS player (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -48,54 +48,59 @@ async function setupDatabase() {
       )
     `);
     await pool.query('CREATE INDEX IF NOT EXISTS idx_player_user ON player(user_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_player_updated ON player(updated_at DESC)');
     console.log('   ✅ player table created');
 
     // Create note table
-    console.log('4/6 Creating note table...');
+    console.log('4/7 Creating note table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS note (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        id SERIAL PRIMARY KEY,
         player_id UUID NOT NULL REFERENCES player(id) ON DELETE CASCADE,
-        note_text TEXT NOT NULL,
+        user_id UUID NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+        body TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_note_player ON note(player_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_note_player ON note(player_id, created_at DESC)');
     console.log('   ✅ note table created');
 
     // Create cue table
-    console.log('5/6 Creating cue table...');
+    console.log('5/7 Creating cue table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS cue (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        player_id UUID NOT NULL REFERENCES player(id) ON DELETE CASCADE,
-        behavior VARCHAR(255) NOT NULL,
-        cue_text TEXT NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW()
+        id SERIAL PRIMARY KEY,
+        zone VARCHAR(40) NOT NULL,
+        label VARCHAR(100) NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE
       )
     `);
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_cue_player ON cue(player_id)');
     console.log('   ✅ cue table created');
 
     // Create observation table
-    console.log('6/6 Creating observation table...');
+    console.log('6/7 Creating observation table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS observation (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        id BIGSERIAL PRIMARY KEY,
         player_id UUID NOT NULL REFERENCES player(id) ON DELETE CASCADE,
-        behavior VARCHAR(255) NOT NULL,
-        context TEXT,
-        hand_outcome SMALLINT,
+        user_id UUID NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+        bucket SMALLINT NOT NULL CHECK (bucket IN (1, 2, 3, 4)),
+        cue_id INTEGER REFERENCES cue(id) ON DELETE SET NULL,
+        free_text VARCHAR(400),
+        hand_outcome SMALLINT CHECK (hand_outcome IN (0, 1, 2, 3)),
+        tilt_state SMALLINT CHECK (tilt_state IN (0, 1, 2, 3)),
+        stack_situation SMALLINT CHECK (stack_situation IN (0, 1, 2, 3)),
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_observation_player ON observation(player_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_obs_player_time ON observation(player_id, created_at DESC)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_obs_player_bucket ON observation(player_id, bucket, created_at DESC)');
     console.log('   ✅ observation table created');
 
     console.log('\n✅ All tables created successfully!\n');
 
     // Insert behavioral cues
-    console.log('📊 Inserting behavioral cues...');
+    console.log('7/7 Inserting behavioral cues...');
     await pool.query(`
       INSERT INTO cue (zone, label) VALUES
         ('hands', 'Chip fumble'),
@@ -116,7 +121,7 @@ async function setupDatabase() {
     console.log('   ✅ Behavioral cues inserted');
 
     // Check if admin user exists
-    console.log('🔐 Creating admin user...');
+    console.log('\n🔐 Creating admin user...');
     const existing = await pool.query('SELECT id FROM app_user WHERE email=$1', [EMAIL]);
 
     if (existing.rows.length > 0) {
