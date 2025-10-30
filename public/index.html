@@ -414,12 +414,27 @@
         display:block !important;
       }
     }
+
+    /* Hide content until auth is verified */
+    body {
+      visibility: hidden;
+    }
+    body.auth-verified {
+      visibility: visible;
+    }
   </style>
   <script>
-    // Check authentication before page loads to prevent flash
-    if (!localStorage.getItem("token")) {
-      window.location.href = "login.html";
-    }
+    // Check authentication immediately before page renders
+    (function() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.replace("login.html");
+      } else {
+        document.addEventListener('DOMContentLoaded', function() {
+          document.body.classList.add('auth-verified');
+        });
+      }
+    })();
   </script>
 </head>
 <body>
