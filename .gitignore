@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+nul
+
+# Old SQL Server files (not needed for PostgreSQL)
+*.sql
+!init_db.sql
+
+# Deployment scripts (optional - keep for reference)
+deploy_render.js
+get_db_info.js
+fix_schema_and_create_admin.js
+migrate_context.js
+run_quick_tap_setup.js
+check_schema.js
+create_admin.js
+verify_db.js
+
+# Documentation (optional - can keep)
+# *.md

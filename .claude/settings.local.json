@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/PPP/**)",
+      "Bash(node fix_schema_and_create_admin.js:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill //F //PID 25676)",
+      "Bash(taskkill //F //PID 8096)",
+      "Bash(node run_quick_tap_setup.js:*)",
+      "Bash(taskkill //F //PID 10632)",
+      "Bash(taskkill //F //PID 38500)",
+      "Bash(sqlcmd:*)",
+      "Bash(\"C:\\Program Files\\SqlCmd\\sqlcmd.exe\" -S localhost -U sa -P \"PokerProfiles2025!\" -Q \"USE PokerProfiles; IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(''dbo.observation'') AND name = ''hand_outcome'') ALTER TABLE dbo.observation ADD hand_outcome TINYINT NULL;\")",
+      "Bash(node migrate_context.js:*)",
+      "Bash(dir C:PokerProfiles /b)",
+      "Bash(node deploy_render.js:*)",
+      "Bash(node get_db_info.js:*)",
+      "Bash(cat:*)",
+      "Bash(git --version:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

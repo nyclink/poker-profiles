@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Green poker table background -->
+  <rect width="100" height="100" fill="#0d7734"/>
+  
+  <!-- White card -->
+  <rect x="25" y="20" width="50" height="60" rx="5" fill="white"/>
+  
+  <!-- Spade symbol -->
+  <path d="M 50 35 C 45 35 42 38 42 42 C 42 45 44 47 47 48 C 45 48 43 50 43 52 C 43 54 45 56 50 56 C 55 56 57 54 57 52 C 57 50 55 48 53 48 C 56 47 58 45 58 42 C 58 38 55 35 50 35 Z" fill="#0d7734"/>
+  
+  <!-- Letter A -->
+  <text x="50" y="72" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#0d7734">A</text>
+</svg>

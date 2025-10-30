@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Poker Profiles — Isaac</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+  <style>
+    :root{
+      --bg:#ffffff;
+      --fg:#111;
+      --muted:#6b7280;
+      --accent:#2563eb;
+      --border:#e5e7eb;
+      --card:#f9fafb;
+      --danger:#ef4444;
+      --ok:#16a34a;
+      --poker-green:#0d7734;
+      --poker-red:#c41e3a;
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;}
+    
+    /* Enhanced Header */
+    header{
+      position:sticky;
+      top:0;
+      background: linear-gradient(135deg, var(--poker-green) 0%, #0a5a28 100%);
+      z-index:10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .wrap{max-width:720px;margin:0 auto;padding:12px;}
+    .header-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .header-brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .poker-logo{
+      width:32px;
+      height:32px;
+      background:white;
+      border-radius:6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    }
+    h1{
+      font-size:20px;
+      margin:0;
+      color:white;
+      font-weight:700;
+    }
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .user-info{
+      font-size:12px;
+      color:rgba(255,255,255,0.9);
+      background:rgba(255,255,255,0.15);
+      padding:4px 10px;
+      border-radius:6px;
+    }
+    .logout-btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:1px solid rgba(255,255,255,0.3);
+      background:rgba(255,255,255,0.1);
+      color:white;
+      border-radius:8px;
+      padding:6px 14px;
+      font-size:13px;
+      cursor:pointer;
+      font-weight:500;
+      transition:all 0.2s;
+    }
+    .logout-btn:hover{
+      background:rgba(255,255,255,0.2);
+      border-color:rgba(255,255,255,0.5);
+    }
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+    .toolbar input[type="search"]{
+      flex:1;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,0.3);
+      border-radius:10px;
+      font-size:16px;
+      background:rgba(255,255,255,0.95);
+    }
+    .toolbar input[type="search"]::placeholder{
+      color:#999;
+    }
+    .btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:15px;
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    .btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn.accent{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .btn.danger{border-color:var(--danger);color:var(--danger);background:#fff;}
+    .btn.ghost{
+      background:rgba(255,255,255,0.9);
+      border:1px solid rgba(255,255,255,0.3);
+      color:var(--poker-green);
+      font-weight:500;
+    }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;}
+    
+    /* Players Section Header */
+    .section-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .section-title{font-weight:700;font-size:16px;}
+    .section-actions{
+      display:flex;
+      gap:6px;
+    }
+    .toggle-btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:8px;
+      padding:6px 10px;
+      font-size:12px;
+      cursor:pointer;
+      color:var(--muted);
+      transition:all 0.2s;
+    }
+    .toggle-btn.active{
+      background:var(--accent);
+      border-color:var(--accent);
+      color:#fff;
+      font-weight:600;
+    }
+    .btn-sm{
+      padding:6px 10px;
+      font-size:13px;
+      border-radius:8px;
+    }
+    
+    .list{display:flex;flex-direction:column;gap:8px;max-height:54vh;overflow:auto;-webkit-overflow-scrolling:touch;}
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    .row:hover{background:#f9fafb;}
+    .row.inactive{
+      opacity:0.5;
+      background:#f3f4f6;
+    }
+    .row-content{
+      flex:1;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .row .name{font-weight:600;}
+    .row .pill{font-size:12px;color:#fff;background:var(--accent);padding:2px 8px;border-radius:999px;margin-left:8px;}
+    .row small{color:var(--muted);}
+    .delete-player-btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      font-size:18px;
+      cursor:pointer;
+      padding:4px 8px;
+      border-radius:6px;
+      line-height:1;
+      transition:all 0.2s;
+      opacity:0;
+    }
+    .row:hover .delete-player-btn{
+      opacity:1;
+    }
+    .delete-player-btn:hover{
+      background:#fee;
+      color:var(--danger);
+    }
+    
+    label{display:block;font-size:13px;color:var(--muted);margin:8px 2px;}
+    input[type="text"], textarea, select, input[type="number"], input[type="range"]{
+      width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px;font-size:16px;background:#fff;
+    }
+    textarea{min-height:90px;resize:vertical;}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+    .chip{border:1px solid var(--border);padding:8px 10px;border-radius:999px;background:#fff;font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .chip:hover{transform:translateY(-1px);box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+    .chip[data-on="1"]{background:#e0f2fe;border-color:#bae6fd;}
+    .chip[data-selected="1"]{background:#fef3c7;border-color:#fbbf24;font-weight:600;}
+    .muted{color:var(--muted);font-size:12px;}
+    .footer{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+    .hint{font-size:12px;color:var(--muted);margin-top:4px;}
+    .range-wrap{display:flex;align-items:center;gap:10px;}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#f3f4f6;border:1px solid var(--border);padding:2px 6px;border-radius:6px;font-size:12px;}
+    .flash{position:fixed;top:80px;right:20px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;opacity:0;transform:translateY(-10px);transition:all 0.3s ease;}
+    .flash.show{opacity:1;transform:translateY(0);}
+    .flash.error{background:#ef4444;}
+    .checkmark{color:#16a34a;font-weight:700;margin-left:6px;}
+    .loading-spinner{
+      display:inline-block;
+      width:14px;
+      height:14px;
+      border:2px solid #e5e7eb;
+      border-top-color:#2563eb;
+      border-radius:50%;
+      animation:spin 0.6s linear infinite;
+      margin-left:8px;
+      vertical-align:middle;
+    }
+    @keyframes spin{
+      to{transform:rotate(360deg);}
+    }
+    .ui-frozen{
+      pointer-events:none;
+      opacity:0.6;
+    }
+    .behavior-counter{
+      display:inline-block;
+      background:#2563eb;
+      color:white;
+      padding:2px 8px;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:600;
+      margin-left:6px;
+    }
+    .btn-loading{
+      pointer-events:none;
+      opacity:0.7;
+      position:relative;
+    }
+    .btn-spinner{
+      display:inline-block;
+      width:12px;
+      height:12px;
+      border:2px solid rgba(255,255,255,0.3);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin 0.6s linear infinite;
+      margin-left:6px;
+      vertical-align:middle;
+    }
+    .btn:disabled, button:disabled{
+      opacity:0.4;
+      cursor:not-allowed;
+      pointer-events:none;
+    }
+
+    /* Mobile Drawer Styles */
+    .drawer-toggle{
+      position:fixed;
+      top:90px;
+      right:16px;
+      z-index:1001;
+      width:40px;
+      height:40px;
+      background:var(--poker-green);
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+      transition:all 0.3s;
+    }
+    .drawer-toggle:hover{
+      background:#0a5a28;
+      transform:scale(1.05);
+    }
+    .drawer-toggle span{
+      width:20px;
+      height:2.5px;
+      background:white;
+      border-radius:3px;
+      transition:all 0.3s;
+    }
+    .drawer-toggle.open span:nth-child(1){
+      transform:rotate(45deg) translate(6px, 6px);
+    }
+    .drawer-toggle.open span:nth-child(2){
+      opacity:0;
+    }
+    .drawer-toggle.open span:nth-child(3){
+      transform:rotate(-45deg) translate(6px, -6px);
+    }
+
+    .drawer-overlay{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(0,0,0,0.5);
+      z-index:999;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 0.3s;
+    }
+    .drawer-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .player-drawer{
+      position:fixed;
+      top:0;
+      left:-100%;
+      width:90%;
+      max-width:400px;
+      height:100vh;
+      background:white;
+      z-index:1000;
+      transition:left 0.3s ease-in-out;
+      overflow-y:auto;
+      box-shadow:4px 0 12px rgba(0,0,0,0.1);
+    }
+    .player-drawer.open{
+      left:0;
+    }
+
+    .drawer-header{
+      position:sticky;
+      top:0;
+      background:linear-gradient(135deg, var(--poker-green) 0%, #0a5a28 100%);
+      color:white;
+      padding:20px;
+      z-index:10;
+    }
+    .drawer-header h2{
+      margin:0 0 12px 0;
+      font-size:20px;
+    }
+
+    .drawer-content{
+      padding:16px;
+    }
+
+    /* Desktop Layout */
+    .desktop-container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:16px;
+    }
+
+    @media(min-width:768px){
+      .drawer-toggle{
+        display:none;
+      }
+      .drawer-overlay{
+        display:none;
+      }
+      .player-drawer{
+        position:relative;
+        left:0;
+        width:100%;
+        height:auto;
+        box-shadow:none;
+        background:transparent;
+      }
+      .drawer-header{
+        display:none !important;
+      }
+      .drawer-content{
+        padding:0;
+      }
+      .desktop-container{
+        display:grid;
+        grid-template-columns:380px 1fr;
+        gap:20px;
+        align-items:start;
+      }
+      main{
+        max-width:100%!important;
+      }
+      #toggleActiveDesktop, #toggleAllDesktop, #newBtnDesktop, #qDesktop{
+        display:block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="flash" class="flash"></div>
+
+  <!-- Mobile Drawer Toggle Button -->
+  <button class="drawer-toggle" id="drawerToggle" aria-label="Toggle player list">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Drawer Overlay -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <header>
+    <div class="wrap">
+      <div class="header-top">
+        <div class="header-brand">
+          <div class="poker-logo">🃏</div>
+          <h1>Poker Profiles</h1>
+        </div>
+        <div class="header-actions">
+          <div class="user-info" id="userEmail"></div>
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="desktop-container">
+    <!-- Player Drawer (Side Curtain on Mobile) -->
+    <aside class="player-drawer" id="playerDrawer">
+      <div class="drawer-header">
+        <h2>🃏 Players</h2>
+        <input id="q" type="search" placeholder="Search players…" style="width:100%;padding:10px 12px;border:1px solid rgba(255,255,255,0.3);border-radius:10px;font-size:15px;background:rgba(255,255,255,0.95);margin-bottom:10px;">
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="toggle-btn active" id="toggleActive" style="flex:1;">Active</button>
+          <button class="toggle-btn" id="toggleAll" style="flex:1;">All</button>
+        </div>
+        <button class="btn btn-sm accent" id="newBtn" style="width:100%;">+ New Player</button>
+      </div>
+      <div class="drawer-content">
+        <section class="card">
+          <div class="section-header">
+            <div class="section-title">Players</div>
+            <div class="section-actions">
+              <button class="toggle-btn active" id="toggleActiveDesktop" style="display:none;">Active</button>
+              <button class="toggle-btn" id="toggleAllDesktop" style="display:none;">All</button>
+              <button class="btn btn-sm accent" id="newBtnDesktop" style="display:none;">+ Player</button>
+            </div>
+          </div>
+          <input id="qDesktop" type="search" placeholder="Search players…" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff;margin-bottom:10px;display:none;">
+          <div id="list" class="list" role="list"></div>
+          <div class="hint" style="margin-top:16px;">Tip: Track one or two players per orbit. Build a baseline, then watch for changes during big pots.</div>
+        </section>
+      </div>
+    </aside>
+
+    <main style="max-width:100%;">
+      <section class="card" style="margin-bottom:16px;">
+      <div class="section-title">Profile</div>
+      <form id="form" autocomplete="off">
+        <div id="selectedProfile" style="font-size:15px;font-weight:600;margin-bottom:12px;padding:8px;background:#f3f4f6;border-radius:8px;display:none;">
+          Selected Profile: <span id="displayName">None</span><span id="loadingIndicator" class="loading-spinner" style="display:none;"></span>
+        </div>
+
+        <label>Tracker <span class="muted" id="quickTapSummary"></span></label>
+        <div style="background:#fef3c7;border:1px solid #fbbf24;padding:10px;border-radius:12px;margin-top:6px;margin-bottom:16px;">
+          <div style="font-size:12px;color:#92400e;margin-bottom:8px;">1. Click behavior(s) you see → 2. Set context → 3. Save</div>
+          <div id="cueChips" class="chips" style="max-height:200px;overflow-y:auto;margin-bottom:8px;"></div>
+
+          <!-- Context Selection -->
+          <div style="background:#fff;padding:8px;border-radius:8px;margin-bottom:8px;border:1px solid #e5e7eb;">
+            <div style="font-size:11px;font-weight:600;color:#666;margin-bottom:6px;">CONTEXT (Optional)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:11px;">
+              <div>
+                <label style="font-size:10px;color:#888;margin-bottom:2px;">Hand Result</label>
+                <select id="contextOutcome" style="width:100%;padding:4px;font-size:11px;border-radius:6px;">
+                  <option value="">Any</option>
+                  <option value="1">Won</option>
+                  <option value="2">Lost</option>
+                  <option value="3">Folded</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:10px;color:#888;margin-bottom:2px;">Tilt State</label>
+                <select id="contextTilt" style="width:100%;padding:4px;font-size:11px;border-radius:6px;">
+                  <option value="">Any</option>
+                  <option value="0">Normal</option>
+                  <option value="1">Slight Tilt</option>
+                  <option value="2">On Tilt</option>
+                  <option value="3">Steaming</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:10px;color:#888;margin-bottom:2px;">Stack Size</label>
+                <select id="contextStack" style="width:100%;padding:4px;font-size:11px;border-radius:6px;">
+                  <option value="">Any</option>
+                  <option value="1">Short</option>
+                  <option value="2">Medium</option>
+                  <option value="3">Deep</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <button type="button" id="tapBluff" class="btn" style="background:#ef4444;color:#fff;border-color:#ef4444;font-size:13px;padding:10px;" disabled>BLUFF</button>
+            <button type="button" id="tapStrong" class="btn" style="background:#16a34a;color:#fff;border-color:#16a34a;font-size:13px;padding:10px;" disabled>STRONG</button>
+            <button type="button" id="tapSemiBluff" class="btn" style="background:#fb923c;color:#fff;border-color:#fb923c;font-size:13px;padding:10px;" disabled>SEMI-BLUFF</button>
+            <button type="button" id="tapSemiStrong" class="btn" style="background:#059669;color:#fff;border-color:#059669;font-size:13px;padding:10px;" disabled>SEMI-STRONG</button>
+          </div>
+          <button type="button" id="analyzeBtn" class="btn" style="width:100%;background:#2563eb;color:#fff;border-color:#2563eb;font-size:14px;padding:10px;margin-bottom:8px;font-weight:600;" disabled>🔍 ANALYZE Selected Behaviors</button>
+          <div id="analysisResult" style="display:none;background:#fff;padding:10px;border-radius:8px;margin-bottom:8px;border:2px solid #2563eb;"></div>
+          <div id="obsHistory" style="max-height:180px;overflow-y:auto;margin-top:8px;padding:6px;background:#fff;border-radius:8px;font-size:12px;"></div>
+        </div>
+
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Write your observations about this player..." style="min-height:150px;"></textarea>
+
+        <div class="footer">
+          <button class="btn accent" id="saveBtn" type="submit">Save</button>
+          <button class="btn" id="newClearBtn" type="button">Clear</button>
+        </div>
+
+      </form>
+      <div style="height:4px;"></div>
+
+    </section>
+
+      <section class="card" style="margin-bottom:16px;">
+        <div class="section-header" style="margin-bottom:12px;">
+          <div class="section-title">🤖 AI Analysis Results</div>
+          <button class="btn btn-sm accent" id="aiAnalyzeBtn" disabled>Analyze Player</button>
+        </div>
+
+        <div id="aiAnalysisContent" style="min-height:100px;background:#f9fafb;border:1px solid var(--border);border-radius:10px;padding:16px;">
+          <div style="text-align:center;color:var(--muted);padding:20px;">
+            Select a player and click "Analyze Player" to get AI-powered insights on their decision patterns, tendencies, and exploitable weaknesses.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Auto-detect API URL: use current domain in production, localhost in development
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:8080'
+      : window.location.origin;
+
+    // Check authentication
+    const TOKEN = localStorage.getItem("token");
+    const userEmail = localStorage.getItem("userEmail");
+
+    if (!TOKEN) {
+      window.location.href = "login.html";
+    }
+
+    // Display user email
+    document.getElementById("userEmail").textContent = userEmail || "";
+
+    const H = { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" };
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userEmail");
+      sessionStorage.setItem("justLoggedOut", "true");
+      window.location.href = "login.html";
+    }
+
+    const $ = sel => document.querySelector(sel);
+    const listEl = $('#list');
+    const form = $('#form');
+    const notesEl = $('#notes');
+    const qEl = $('#q');
+    const qDesktopEl = $('#qDesktop');
+
+    let currentId = null;
+    let showInactive = false;
+    let isRenderingList = false; // Flag to prevent concurrent renders
+
+    // Drawer functionality
+    const drawerToggle = $('#drawerToggle');
+    const drawerOverlay = $('#drawerOverlay');
+    const playerDrawer = $('#playerDrawer');
+
+    function openDrawer() {
+      playerDrawer.classList.add('open');
+      drawerOverlay.classList.add('show');
+      drawerToggle.classList.add('open');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeDrawer() {
+      playerDrawer.classList.remove('open');
+      drawerOverlay.classList.remove('show');
+      drawerToggle.classList.remove('open');
+      document.body.style.overflow = ''; // Restore scrolling
+    }
+
+    function toggleDrawer() {
+      if (playerDrawer.classList.contains('open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    }
+
+    drawerToggle.addEventListener('click', toggleDrawer);
+    drawerOverlay.addEventListener('click', closeDrawer);
+
+    // Close drawer on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && playerDrawer.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+
+    // Flash message function
+    function flash(message, isError = false) {
+      const flashEl = document.getElementById('flash');
+      flashEl.textContent = message;
+      flashEl.className = 'flash show' + (isError ? ' error' : '');
+      setTimeout(() => {
+        flashEl.classList.remove('show');
+      }, 2500);
+    }
+
+    // Sync search inputs
+    qEl.addEventListener('input', () => {
+      qDesktopEl.value = qEl.value;
+      renderList();
+    });
+    qDesktopEl.addEventListener('input', () => {
+      qEl.value = qDesktopEl.value;
+      renderList();
+    });
+
+    // Toggle between Active and All players (mobile)
+    $('#toggleActive').addEventListener('click', () => {
+      showInactive = false;
+      $('#toggleActive').classList.add('active');
+      $('#toggleAll').classList.remove('active');
+      $('#toggleActiveDesktop').classList.add('active');
+      $('#toggleAllDesktop').classList.remove('active');
+      renderList();
+    });
+
+    $('#toggleAll').addEventListener('click', () => {
+      showInactive = true;
+      $('#toggleAll').classList.add('active');
+      $('#toggleActive').classList.remove('active');
+      $('#toggleAllDesktop').classList.add('active');
+      $('#toggleActiveDesktop').classList.remove('active');
+      renderList();
+    });
+
+    // Desktop toggle buttons
+    $('#toggleActiveDesktop').addEventListener('click', () => {
+      showInactive = false;
+      $('#toggleActive').classList.add('active');
+      $('#toggleAll').classList.remove('active');
+      $('#toggleActiveDesktop').classList.add('active');
+      $('#toggleAllDesktop').classList.remove('active');
+      renderList();
+    });
+
+    $('#toggleAllDesktop').addEventListener('click', () => {
+      showInactive = true;
+      $('#toggleAll').classList.add('active');
+      $('#toggleActive').classList.remove('active');
+      $('#toggleAllDesktop').classList.add('active');
+      $('#toggleActiveDesktop').classList.remove('active');
+      renderList();
+    });
+
+    async function updatePlayerCounter(playerId) {
+      if (!playerId) return;
+
+      try {
+        // Fetch updated count for this player
+        const summaryResp = await fetch(`${API_BASE}/api/players/${playerId}/observe/summary`, { headers: H });
+        const summary = await summaryResp.json();
+        const totalCount = (summary.bluff || 0) + (summary.semi_bluff || 0) + (summary.strong || 0) + (summary.semi_strong || 0);
+
+        // Find the player row in the DOM using data attribute
+        const row = document.querySelector(`#list .row[data-player-id="${playerId}"]`);
+        if (row) {
+          // Find the name element
+          const nameEl = row.querySelector('.name');
+          if (nameEl) {
+            // Remove existing counter if any
+            const existingCounter = nameEl.querySelector('.behavior-counter');
+            if (existingCounter) {
+              existingCounter.remove();
+            }
+
+            // Add new counter if count > 0
+            if (totalCount > 0) {
+              const badge = document.createElement('span');
+              badge.className = 'behavior-counter';
+              badge.textContent = totalCount;
+              badge.style.fontSize = '11px';
+              badge.style.padding = '2px 6px';
+              nameEl.appendChild(badge);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error updating player counter:', err);
+      }
+    }
+
+    async function renderList(){
+      // Prevent concurrent renders
+      if (isRenderingList) {
+        console.log('Skipping renderList - already rendering');
+        return;
+      }
+      isRenderingList = true;
+
+      const q = (qEl.value || '').trim();
+      try {
+        const response = await fetch(`${API_BASE}/api/players?q=${encodeURIComponent(q)}`, { headers: H });
+        let players = await response.json();
+
+        // ALWAYS clear the list first
+        listEl.innerHTML = '';
+
+        // Ensure players is an array
+        if (!Array.isArray(players)) {
+          console.error('Players is not an array:', players);
+          return;
+        }
+
+        // Remove duplicates by ID (use Map for better deduplication)
+        const playerMap = new Map();
+        for (const player of players) {
+          if (!playerMap.has(player.id)) {
+            playerMap.set(player.id, player);
+          }
+        }
+        const uniquePlayers = Array.from(playerMap.values());
+
+        console.log(`Total players from API: ${players.length}, Unique: ${uniquePlayers.length}`);
+
+        // Filter based on active/inactive toggle
+        const filteredPlayers = showInactive ? uniquePlayers : uniquePlayers.filter(p => p.is_active !== false);
+
+        if(filteredPlayers.length === 0){
+          const div = document.createElement('div');
+          div.className = 'muted';
+          div.style.padding = '8px';
+          div.textContent = q ? 'No matches.' : 'No players yet. Add one →';
+          listEl.appendChild(div);
+          return;
+        }
+
+        filteredPlayers.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+        // Fetch behavior counts for all players IN PARALLEL for speed
+        const behaviorCounts = {};
+        const countPromises = filteredPlayers.map(async (p) => {
+          try {
+            const summaryResp = await fetch(`${API_BASE}/api/players/${p.id}/observe/summary`, { headers: H });
+            const summary = await summaryResp.json();
+            const totalCount = (summary.bluff || 0) + (summary.semi_bluff || 0) + (summary.strong || 0) + (summary.semi_strong || 0);
+            return { id: p.id, count: totalCount };
+          } catch (err) {
+            return { id: p.id, count: 0 };
+          }
+        });
+
+        const results = await Promise.all(countPromises);
+        results.forEach(r => {
+          behaviorCounts[r.id] = r.count;
+        });
+
+        for(const p of filteredPlayers){
+          const row = document.createElement('div');
+          row.className = 'row' + (p.is_active === false ? ' inactive' : '');
+          row.dataset.playerId = p.id; // Add player ID to row for easy lookup
+
+          const rowContent = document.createElement('div');
+          rowContent.className = 'row-content';
+          rowContent.onclick = () => loadToForm(p.id);
+          rowContent.style.cursor = 'pointer';
+
+          const left = document.createElement('div');
+          left.style.textAlign = 'left';
+
+          const nm = document.createElement('div');
+          nm.className = 'name';
+          nm.textContent = p.name || 'Unnamed';
+
+          // Add checkmark if this is the currently selected player
+          if (currentId === p.id) {
+            const check = document.createElement('span');
+            check.className = 'checkmark';
+            check.textContent = '✓';
+            nm.appendChild(check);
+          }
+
+          // Add behavior counter badge
+          const count = behaviorCounts[p.id] || 0;
+          if (count > 0) {
+            const badge = document.createElement('span');
+            badge.className = 'behavior-counter';
+            badge.textContent = count;
+            badge.style.fontSize = '11px';
+            badge.style.padding = '2px 6px';
+            nm.appendChild(badge);
+          }
+
+          left.appendChild(nm);
+          rowContent.appendChild(left);
+          row.appendChild(rowContent);
+
+          // Add export button (only for active players)
+          if (p.is_active !== false) {
+            const exportBtn = document.createElement('button');
+            exportBtn.className = 'delete-player-btn';
+            exportBtn.innerHTML = '📥';
+            exportBtn.title = 'Export player data';
+            exportBtn.style.opacity = '1';
+            exportBtn.style.fontSize = '16px';
+            exportBtn.onclick = (e) => {
+              e.stopPropagation();
+              exportPlayer(p.id, p.name);
+            };
+            row.appendChild(exportBtn);
+          }
+
+          // Add restore button for inactive players
+          if (p.is_active === false) {
+            const restoreBtn = document.createElement('button');
+            restoreBtn.className = 'delete-player-btn';
+            restoreBtn.innerHTML = '↻';
+            restoreBtn.title = 'Restore player';
+            restoreBtn.style.color = '#16a34a';
+            restoreBtn.style.fontSize = '20px';
+            restoreBtn.style.opacity = '1';
+            restoreBtn.onclick = (e) => {
+              e.stopPropagation();
+              restorePlayer(p.id, p.name);
+            };
+            row.appendChild(restoreBtn);
+          }
+
+          // Add delete button (only for active players)
+          if (p.is_active !== false) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-player-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.title = 'Delete player';
+            deleteBtn.onclick = (e) => {
+              e.stopPropagation();
+              deletePlayer(p.id, p.name);
+            };
+            row.appendChild(deleteBtn);
+          }
+
+          listEl.appendChild(row);
+        }
+      } catch (err) {
+        console.error('Error rendering list:', err);
+      } finally {
+        isRenderingList = false;
+      }
+    }
+
+    async function deletePlayer(id, name) {
+      if (!confirm(`Delete player "${name}"? This will mark them as inactive.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${id}`, {
+          method: 'DELETE',
+          headers: H
+        });
+
+        if (response.ok) {
+          // Instant visual feedback - no flash message
+          if (currentId === id) {
+            clearForm(); // clearForm already calls renderList()
+          } else {
+            renderList(); // Only call if we didn't clear the form
+          }
+        }
+      } catch (err) {
+        console.error('Error deleting player:', err);
+      }
+    }
+
+    async function restorePlayer(id, name) {
+      if (!confirm(`Restore player "${name}"?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${id}/restore`, {
+          method: 'PATCH',
+          headers: H
+        });
+
+        if (response.ok) {
+          // Instant visual feedback - no flash message
+          renderList();
+        }
+      } catch (err) {
+        console.error('Error restoring player:', err);
+      }
+    }
+
+    async function loadToForm(id){
+      currentId = id;
+
+      // Close drawer on mobile when player is selected
+      closeDrawer();
+
+      // Show loading indicator and freeze UI
+      $('#loadingIndicator').style.display = 'inline-block';
+      $('#selectedProfile').style.display = 'block';
+      $('main').classList.add('ui-frozen');
+
+      // Reset tracker and behavior log immediately
+      clearQuickTapSelections();
+      $('#obsHistory').innerHTML = '';
+      $('#quickTapSummary').textContent = '';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${id}`, { headers: H });
+        const player = await response.json();
+
+        // Clean notes - filter out old zones_json data (JSON objects)
+        let notes = player.notes || '';
+        try {
+          // If it's valid JSON, it's old zones data - ignore it
+          JSON.parse(notes);
+          notes = '';
+        } catch {
+          // Not JSON, it's real notes - keep it
+        }
+        notesEl.value = notes;
+
+        $('#displayName').textContent = player.name || 'Unnamed';
+
+        await loadQuickTapData();
+        renderList();
+
+        // Enable behavior buttons when player is loaded
+        enableBehaviorButtons(true);
+      } catch (err) {
+        console.error('Error loading player:', err);
+        // Make sure buttons stay disabled on error
+        enableBehaviorButtons(false);
+      } finally {
+        // Hide loading indicator and unfreeze UI
+        $('#loadingIndicator').style.display = 'none';
+        $('main').classList.remove('ui-frozen');
+      }
+    }
+
+    function clearForm(){
+      currentId = null;
+      notesEl.value = '';
+      $('#selectedProfile').style.display = 'none';
+      $('#displayName').textContent = 'None';
+      clearQuickTapSelections();
+      $('#obsHistory').innerHTML = '';
+      $('#quickTapSummary').textContent = '';
+      enableBehaviorButtons(false); // Disable buttons when no player selected
+      renderList();
+    }
+
+    $('#newBtn').addEventListener('click', () => {
+      const name = prompt('Enter player name:');
+      if (!name || !name.trim()) {
+        return;
+      }
+      createPlayer(name.trim());
+    });
+
+    $('#newBtnDesktop').addEventListener('click', () => {
+      const name = prompt('Enter player name:');
+      if (!name || !name.trim()) {
+        return;
+      }
+      createPlayer(name.trim());
+    });
+
+    async function createPlayer(name) {
+      try {
+        const response = await fetch(`${API_BASE}/api/players`, {
+          method: 'POST',
+          headers: H,
+          body: JSON.stringify({ name, notes: '' })
+        });
+
+        if (response.ok) {
+          const newPlayer = await response.json();
+          await renderList();
+          loadToForm(newPlayer.id); // loadToForm will call renderList again, but our flag will prevent duplicate render
+        }
+      } catch (err) {
+        console.error('Error creating player:', err);
+      }
+    }
+
+    $('#newClearBtn').addEventListener('click', clearForm);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!currentId) {
+        return;
+      }
+
+      const notes = notesEl.value;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${currentId}`, {
+          method: 'PUT',
+          headers: H,
+          body: JSON.stringify({ notes })
+        });
+
+        if (response.ok) {
+          // Silent save - no flash message
+          renderList();
+        }
+      } catch (err) {
+        console.error('Error saving:', err);
+      }
+    });
+
+    async function exportPlayer(playerId, playerName) {
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${playerId}`, { headers: H });
+        const player = await response.json();
+
+        // Fetch observations
+        const obsResp = await fetch(`${API_BASE}/api/players/${playerId}/observe`, { headers: H });
+        const observations = await obsResp.json();
+
+        const exportData = {
+          player: player,
+          observations: observations
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${playerName.replace(/[^a-z0-9]/gi, '_')}-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        flash(`Exported ${playerName}'s data`);
+      } catch (err) {
+        console.error('Error exporting player:', err);
+        flash('Export failed', true);
+      }
+    }
+
+    // ========== QUICK TAP (TRACKER) FEATURE ==========
+    let allCues = [];
+    let selectedCueIds = [];
+
+    async function loadCues() {
+      try {
+        const response = await fetch(`${API_BASE}/api/cues`, { headers: H });
+        allCues = await response.json();
+        renderCueChips();
+      } catch (err) {
+        console.error('Error loading cues:', err);
+      }
+    }
+
+    function renderCueChips() {
+      const container = $('#cueChips');
+      container.innerHTML = '';
+      for (const cue of allCues) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.textContent = cue.label;
+        chip.dataset.cueId = cue.id;
+        chip.dataset.selected = '0';
+        chip.onclick = () => toggleCueSelection(cue.id);
+        container.appendChild(chip);
+      }
+    }
+
+    function toggleCueSelection(cueId) {
+      if (selectedCueIds.includes(cueId)) {
+        selectedCueIds = selectedCueIds.filter(id => id !== cueId);
+      } else {
+        selectedCueIds.push(cueId);
+      }
+      updateCueChipsUI();
+    }
+
+    function updateCueChipsUI() {
+      const chips = document.querySelectorAll('#cueChips .chip');
+      chips.forEach(chip => {
+        const cueId = chip.dataset.cueId;
+        // Convert cueId to string for comparison since dataset always returns strings
+        if (selectedCueIds.map(String).includes(cueId)) {
+          chip.dataset.selected = '1';
+        } else {
+          chip.dataset.selected = '0';
+        }
+      });
+    }
+
+    function clearQuickTapSelections() {
+      selectedCueIds = [];
+      updateCueChipsUI();
+      $('#contextOutcome').value = '';
+      $('#contextTilt').value = '';
+      $('#contextStack').value = '';
+      $('#analysisResult').style.display = 'none';
+    }
+
+    function enableBehaviorButtons(enable) {
+      $('#tapBluff').disabled = !enable;
+      $('#tapStrong').disabled = !enable;
+      $('#tapSemiBluff').disabled = !enable;
+      $('#tapSemiStrong').disabled = !enable;
+      $('#analyzeBtn').disabled = !enable;
+      $('#aiAnalyzeBtn').disabled = !enable;
+    }
+
+    async function saveObservation(bucket, buttonEl) {
+      if (!currentId) {
+        return;
+      }
+      if (selectedCueIds.length === 0) {
+        return;
+      }
+
+      // Show loading state on button
+      const originalText = buttonEl.textContent;
+      buttonEl.classList.add('btn-loading');
+      buttonEl.innerHTML = originalText + '<span class="btn-spinner"></span>';
+
+      const hand_outcome = $('#contextOutcome').value || null;
+      const tilt_state = $('#contextTilt').value || null;
+      const stack_situation = $('#contextStack').value || null;
+
+      try {
+        for (const cueId of selectedCueIds) {
+          const response = await fetch(`${API_BASE}/api/players/${currentId}/observe`, {
+            method: 'POST',
+            headers: H,
+            body: JSON.stringify({
+              bucket,
+              cue_id: cueId,
+              hand_outcome: hand_outcome ? parseInt(hand_outcome) : null,
+              tilt_state: tilt_state ? parseInt(tilt_state) : null,
+              stack_situation: stack_situation ? parseInt(stack_situation) : null
+            })
+          });
+          if (!response.ok) throw new Error('Failed to save observation');
+        }
+        // Silent save - instant feedback via UI update
+        clearQuickTapSelections();
+        await loadQuickTapData();
+        // Update just the current player's counter
+        updatePlayerCounter(currentId);
+      } catch (err) {
+        console.error('Error saving observation:', err);
+      } finally {
+        // Hide loading state
+        buttonEl.classList.remove('btn-loading');
+        buttonEl.textContent = originalText;
+      }
+    }
+
+    $('#tapBluff').addEventListener('click', (e) => saveObservation(1, e.currentTarget));
+    $('#tapStrong').addEventListener('click', (e) => saveObservation(2, e.currentTarget));
+    $('#tapSemiBluff').addEventListener('click', (e) => saveObservation(3, e.currentTarget));
+    $('#tapSemiStrong').addEventListener('click', (e) => saveObservation(4, e.currentTarget));
+
+    async function loadQuickTapData() {
+      if (!currentId) return;
+
+      try {
+        // Load summary
+        const summaryResp = await fetch(`${API_BASE}/api/players/${currentId}/observe/summary`, { headers: H });
+        const summary = await summaryResp.json();
+        $('#quickTapSummary').textContent = `(${summary.bluff || 0} Bluff, ${summary.semi_bluff || 0} Semi-Bluff, ${summary.strong || 0} Strong, ${summary.semi_strong || 0} Semi-Strong)`;
+
+        // Load history
+        const historyResp = await fetch(`${API_BASE}/api/players/${currentId}/observe`, { headers: H });
+        const observations = await historyResp.json();
+        renderObservationHistory(observations);
+      } catch (err) {
+        console.error('Error loading quick tap data:', err);
+      }
+    }
+
+    function renderObservationHistory(observations) {
+      const container = $('#obsHistory');
+      container.innerHTML = '';
+
+      if (observations.length === 0) {
+        container.innerHTML = '<div style="color:#999;padding:8px;">No observations yet.</div>';
+        return;
+      }
+
+      for (const obs of observations.reverse()) {
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:6px;margin-bottom:4px;border-bottom:1px solid #e5e7eb;';
+
+        const bucketColors = { 1: '#ef4444', 2: '#16a34a', 3: '#fb923c', 4: '#059669' };
+        const bucketLabels = { 1: 'BLUFF', 2: 'STRONG', 3: 'SEMI-BLUFF', 4: 'SEMI-STRONG' };
+
+        const dot = document.createElement('span');
+        dot.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:50%;background:${bucketColors[obs.bucket]};margin-right:6px;`;
+
+        const label = document.createElement('span');
+        label.style.cssText = 'font-weight:600;margin-right:6px;';
+        label.textContent = bucketLabels[obs.bucket];
+
+        const cueLabel = document.createElement('span');
+        cueLabel.textContent = `— ${obs.cue_label || 'Custom'}`;
+
+        // Context badges
+        const contextBadges = document.createElement('span');
+        contextBadges.style.cssText = 'margin-left:6px;font-size:11px;';
+        
+        if (obs.hand_outcome === 1) contextBadges.innerHTML += '<span style="color:#2563eb;margin:0 2px;">✓Won</span>';
+        else if (obs.hand_outcome === 2) contextBadges.innerHTML += '<span style="color:#ef4444;margin:0 2px;">✗Lost</span>';
+        else if (obs.hand_outcome === 3) contextBadges.innerHTML += '<span style="color:#6b7280;margin:0 2px;">Fold</span>';
+
+        if (obs.tilt_state === 0) contextBadges.innerHTML += '<span style="background:#fef3c7;padding:2px 4px;border-radius:4px;margin:0 2px;">😐</span>';
+        else if (obs.tilt_state === 1) contextBadges.innerHTML += '<span style="background:#fef3c7;padding:2px 4px;border-radius:4px;margin:0 2px;">😠</span>';
+        else if (obs.tilt_state === 2) contextBadges.innerHTML += '<span style="background:#fef3c7;padding:2px 4px;border-radius:4px;margin:0 2px;">🔥</span>';
+        else if (obs.tilt_state === 3) contextBadges.innerHTML += '<span style="background:#fef3c7;padding:2px 4px;border-radius:4px;margin:0 2px;">💥</span>';
+
+        if (obs.stack_situation === 1) contextBadges.innerHTML += '<span style="background:#dcfce7;padding:2px 4px;border-radius:4px;margin:0 2px;">S$</span>';
+        else if (obs.stack_situation === 2) contextBadges.innerHTML += '<span style="background:#dcfce7;padding:2px 4px;border-radius:4px;margin:0 2px;">M$</span>';
+        else if (obs.stack_situation === 3) contextBadges.innerHTML += '<span style="background:#dcfce7;padding:2px 4px;border-radius:4px;margin:0 2px;">D$</span>';
+
+        const time = document.createElement('span');
+        time.style.cssText = 'color:#999;font-size:11px;margin-left:6px;';
+        const d = new Date(obs.created_at);
+        time.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '×';
+        deleteBtn.style.cssText = 'border:none;background:transparent;color:#ef4444;cursor:pointer;font-size:16px;padding:0 4px;margin-left:8px;';
+        deleteBtn.onclick = () => deleteObservation(obs.id);
+
+        const left = document.createElement('div');
+        left.style.cssText = 'display:flex;align-items:center;flex:1;';
+        left.appendChild(dot);
+        left.appendChild(label);
+        left.appendChild(cueLabel);
+        left.appendChild(contextBadges);
+        left.appendChild(time);
+
+        item.appendChild(left);
+        item.appendChild(deleteBtn);
+        container.appendChild(item);
+      }
+    }
+
+    async function deleteObservation(obsId) {
+      if (!currentId) return;
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${currentId}/observe/${obsId}`, {
+          method: 'DELETE',
+          headers: H
+        });
+        if (response.ok) {
+          // Silent delete with instant UI update
+          await loadQuickTapData();
+          // Update just the current player's counter
+          updatePlayerCounter(currentId);
+        }
+      } catch (err) {
+        console.error('Error deleting observation:', err);
+      }
+    }
+
+    // Analysis feature
+    $('#analyzeBtn').addEventListener('click', async () => {
+      if (!currentId) {
+        return;
+      }
+      if (selectedCueIds.length === 0) {
+        return;
+      }
+
+      const hand_outcome = $('#contextOutcome').value || null;
+      const tilt_state = $('#contextTilt').value || null;
+      const stack_situation = $('#contextStack').value || null;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/players/${currentId}/observe/analyze`, {
+          method: 'POST',
+          headers: H,
+          body: JSON.stringify({
+            cue_ids: selectedCueIds,
+            hand_outcome: hand_outcome ? parseInt(hand_outcome) : null,
+            tilt_state: tilt_state ? parseInt(tilt_state) : null,
+            stack_situation: stack_situation ? parseInt(stack_situation) : null
+          })
+        });
+
+        if (!response.ok) throw new Error('Analysis failed');
+
+        const result = await response.json();
+        displayAnalysisResult(result);
+      } catch (err) {
+        console.error('Error analyzing behaviors:', err);
+      }
+    });
+
+    function displayAnalysisResult(result) {
+      const container = $('#analysisResult');
+      container.style.display = 'block';
+
+      const bucketColors = { bluff: '#ef4444', semi_bluff: '#fb923c', strong: '#16a34a', semi_strong: '#059669' };
+      const bucketLabels = { bluff: 'BLUFF', semi_bluff: 'SEMI-BLUFF', strong: 'STRONG', semi_strong: 'SEMI-STRONG' };
+
+      let html = '<div style="font-weight:600;margin-bottom:8px;font-size:13px;">Analysis Results:</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">';
+
+      for (const [bucket, percentage] of Object.entries(result.percentages)) {
+        const count = result.counts[bucket] || 0;
+        html += `
+          <div style="padding:8px;border-radius:6px;background:${bucketColors[bucket]};color:white;text-align:center;">
+            <div style="font-weight:700;font-size:18px;">${percentage}%</div>
+            <div style="font-size:11px;">${bucketLabels[bucket]}</div>
+            <div style="font-size:10px;opacity:0.8;">(${count} obs)</div>
+          </div>
+        `;
+      }
+
+      html += '</div>';
+      html += `<div style="font-size:11px;color:#666;">Based on ${result.total} historical observations</div>`;
+
+      if (result.context_message) {
+        html += `<div style="font-size:11px;color:#666;margin-top:4px;">${result.context_message}</div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // AI Analysis Feature
+    $('#aiAnalyzeBtn').addEventListener('click', async () => {
+      if (!currentId) return;
+
+      const btn = $('#aiAnalyzeBtn');
+      const originalText = btn.textContent;
+      const contentDiv = $('#aiAnalysisContent');
+
+      try {
+        // Show loading state
+        btn.disabled = true;
+        btn.innerHTML = 'Analyzing... <span class="btn-spinner"></span>';
+        contentDiv.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px;"><div class="loading-spinner" style="margin:0 auto 10px;"></div><div>AI is analyzing player behavior...</div></div>';
+
+        // Gather all player data
+        const playerResp = await fetch(`${API_BASE}/api/players/${currentId}`, { headers: H });
+        const player = await playerResp.json();
+
+        const obsResp = await fetch(`${API_BASE}/api/players/${currentId}/observe`, { headers: H });
+        const observations = await obsResp.json();
+
+        const summaryResp = await fetch(`${API_BASE}/api/players/${currentId}/observe/summary`, { headers: H });
+        const summary = await summaryResp.json();
+
+        // Send to AI endpoint
+        const aiResp = await fetch(`${API_BASE}/api/players/${currentId}/ai-analyze`, {
+          method: 'POST',
+          headers: H,
+          body: JSON.stringify({
+            player: player,
+            observations: observations,
+            summary: summary
+          })
+        });
+
+        if (!aiResp.ok) {
+          throw new Error('AI analysis failed');
+        }
+
+        const result = await aiResp.json();
+
+        // Display results
+        displayAIAnalysis(result);
+
+      } catch (err) {
+        console.error('Error during AI analysis:', err);
+        contentDiv.innerHTML = '<div style="color:var(--danger);padding:20px;text-align:center;">❌ AI analysis failed. Please try again.</div>';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+
+    function displayAIAnalysis(result) {
+      const contentDiv = $('#aiAnalysisContent');
+
+      let html = '<div style="line-height:1.6;">';
+
+      if (result.analysis) {
+        // Format the AI response with proper styling
+        html += '<div style="background:#fff;padding:14px;border-radius:8px;margin-bottom:12px;border-left:4px solid #2563eb;">';
+        html += '<div style="font-weight:600;margin-bottom:8px;color:#2563eb;">🧠 AI Insights</div>';
+        html += '<div style="white-space:pre-wrap;color:#374151;">' + escapeHtml(result.analysis) + '</div>';
+        html += '</div>';
+      }
+
+      if (result.tendencies && result.tendencies.length > 0) {
+        html += '<div style="background:#fff;padding:14px;border-radius:8px;margin-bottom:12px;border-left:4px solid #16a34a;">';
+        html += '<div style="font-weight:600;margin-bottom:8px;color:#16a34a;">📊 Key Tendencies</div>';
+        html += '<ul style="margin:0;padding-left:20px;">';
+        result.tendencies.forEach(t => {
+          html += '<li style="margin-bottom:6px;">' + escapeHtml(t) + '</li>';
+        });
+        html += '</ul></div>';
+      }
+
+      if (result.exploits && result.exploits.length > 0) {
+        html += '<div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #ef4444;">';
+        html += '<div style="font-weight:600;margin-bottom:8px;color:#ef4444;">🎯 Exploitable Weaknesses</div>';
+        html += '<ul style="margin:0;padding-left:20px;">';
+        result.exploits.forEach(e => {
+          html += '<li style="margin-bottom:6px;">' + escapeHtml(e) + '</li>';
+        });
+        html += '</ul></div>';
+      }
+
+      html += '</div>';
+      contentDiv.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Initialize
+    loadCues();
+    renderList();
+  </script>
+</body>
+</html>

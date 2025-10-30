@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Poker Profiles</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .poker-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #0d7734 0%, #0a5a28 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 4px 12px rgba(13, 119, 52, 0.3);
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #1a1a1a;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #374151;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.2s;
+      background: #ffffff;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #0d7734;
+      box-shadow: 0 0 0 3px rgba(13, 119, 52, 0.1);
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-top: 16px;
+      margin-bottom: 24px;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      cursor: pointer;
+      accent-color: #0d7734;
+    }
+
+    .remember-me label {
+      margin: 0;
+      cursor: pointer;
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 400;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #0d7734 0%, #0a5a28 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(13, 119, 52, 0.2);
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(13, 119, 52, 0.3);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+      border: 1px solid #fecaca;
+    }
+
+    .error.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 24px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 32px 24px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .poker-logo {
+        width: 48px;
+        height: 48px;
+        font-size: 28px;
+      }
+    }
+
+    /* Loading state */
+    button[type="submit"]:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-header">
+      <div class="logo-container">
+        <div class="poker-logo">🃏</div>
+      </div>
+      <h1>Poker Profiles</h1>
+      <p class="subtitle">Track player behaviors and tells</p>
+    </div>
+
+    <div class="login-container">
+      <div id="error" class="error"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            required 
+            autocomplete="email"
+            placeholder="you@example.com"
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            required 
+            autocomplete="current-password"
+            placeholder="Enter your password"
+          />
+        </div>
+        <div class="remember-me">
+          <input type="checkbox" id="rememberMe" />
+          <label for="rememberMe">Remember me on this device</label>
+        </div>
+        <button type="submit" id="loginBtn">Sign In</button>
+      </form>
+    </div>
+
+    <div class="footer-text">
+      Track. Analyze. Win.
+    </div>
+  </div>
+
+  <script>
+    // Auto-detect API URL: use current domain in production, localhost in development
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:8080'
+      : window.location.origin;
+
+    // Check if credentials are saved
+    window.addEventListener("DOMContentLoaded", () => {
+      // Check if user just logged out
+      const justLoggedOut = sessionStorage.getItem("justLoggedOut");
+      if (justLoggedOut) {
+        sessionStorage.removeItem("justLoggedOut");
+        // Don't auto-login, just pre-fill credentials
+        const savedEmail = localStorage.getItem("savedEmail");
+        if (savedEmail) {
+          document.getElementById("email").value = savedEmail;
+          document.getElementById("password").value = localStorage.getItem("savedPassword") || "";
+          document.getElementById("rememberMe").checked = localStorage.getItem("rememberMe") === "true";
+        }
+        return;
+      }
+
+      const savedEmail = localStorage.getItem("savedEmail");
+      const savedPassword = localStorage.getItem("savedPassword");
+      const rememberMe = localStorage.getItem("rememberMe") === "true";
+
+      if (savedEmail && savedPassword && rememberMe) {
+        document.getElementById("email").value = savedEmail;
+        document.getElementById("password").value = savedPassword;
+        document.getElementById("rememberMe").checked = true;
+
+        // Auto-login if remember me is checked
+        performLogin(savedEmail, savedPassword, true);
+      } else if (savedEmail) {
+        document.getElementById("email").value = savedEmail;
+      }
+    });
+
+    async function performLogin(email, password, isAutoLogin = false) {
+      const errorDiv = document.getElementById("error");
+      const loginBtn = document.getElementById("loginBtn");
+      const rememberMe = document.getElementById("rememberMe").checked;
+
+      // Clear previous errors
+      errorDiv.classList.remove("show");
+
+      // Disable button during login
+      if (!isAutoLogin) {
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Signing in...";
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+          if (!isAutoLogin) {
+            const data = await response.json();
+            errorDiv.textContent = "Invalid email or password";
+            errorDiv.classList.add("show");
+            loginBtn.disabled = false;
+            loginBtn.textContent = "Sign In";
+          }
+          // Clear saved credentials if auto-login fails
+          localStorage.removeItem("savedEmail");
+          localStorage.removeItem("savedPassword");
+          localStorage.removeItem("rememberMe");
+          return;
+        }
+
+        const data = await response.json();
+
+        // Store token in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userEmail", data.user.email);
+
+        // Save credentials if "Remember Me" is checked
+        if (rememberMe) {
+          localStorage.setItem("savedEmail", email);
+          localStorage.setItem("savedPassword", password);
+          localStorage.setItem("rememberMe", "true");
+        } else {
+          localStorage.removeItem("savedEmail");
+          localStorage.removeItem("savedPassword");
+          localStorage.removeItem("rememberMe");
+        }
+
+        // Redirect to main app
+        window.location.href = "index.html";
+      } catch (err) {
+        if (!isAutoLogin) {
+          errorDiv.textContent = "Unable to connect. Please try again.";
+          errorDiv.classList.add("show");
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Sign In";
+        }
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      await performLogin(email, password, false);
+    });
+  </script>
+</body>
+</html>
