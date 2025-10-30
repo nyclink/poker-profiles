@@ -415,6 +415,12 @@
       }
     }
   </style>
+  <script>
+    // Check authentication before page loads to prevent flash
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 <body>
   <div id="flash" class="flash"></div>
@@ -565,13 +571,9 @@
       ? 'http://localhost:8080'
       : window.location.origin;
 
-    // Check authentication
+    // Get authentication token (already checked in head)
     const TOKEN = localStorage.getItem("token");
     const userEmail = localStorage.getItem("userEmail");
-
-    if (!TOKEN) {
-      window.location.href = "login.html";
-    }
 
     // Display user email
     document.getElementById("userEmail").textContent = userEmail || "";
