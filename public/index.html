@@ -422,6 +422,71 @@
     body.auth-verified {
       visibility: visible;
     }
+
+    /* Add Player Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      color: var(--fg);
+    }
+    .modal-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+    .modal-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .modal-buttons button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+    }
+    .modal-cancel {
+      background: var(--card);
+      color: var(--fg);
+    }
+    .modal-confirm {
+      background: var(--accent);
+      color: white;
+    }
   </style>
   <script>
     // Check authentication immediately before page renders
@@ -439,6 +504,18 @@
 </head>
 <body>
   <div id="flash" class="flash"></div>
+
+  <!-- Add Player Modal -->
+  <div class="modal-overlay" id="addPlayerModal">
+    <div class="modal-box">
+      <h3 class="modal-title">New Player</h3>
+      <input type="text" class="modal-input" id="newPlayerName" placeholder="Enter player name" autofocus>
+      <div class="modal-buttons">
+        <button class="modal-cancel" id="modalCancel">Cancel</button>
+        <button class="modal-confirm" id="modalConfirm">Add Player</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Mobile Drawer Toggle Button -->
   <button class="drawer-toggle" id="drawerToggle" aria-label="Toggle player list">
@@ -1008,20 +1085,48 @@
       renderList();
     }
 
-    $('#newBtn').addEventListener('click', () => {
-      const name = prompt('Enter player name:');
-      if (!name || !name.trim()) {
+    // Modal functions
+    function showAddPlayerModal() {
+      const modal = $('#addPlayerModal');
+      const input = $('#newPlayerName');
+      modal.classList.add('active');
+      input.value = '';
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function hideAddPlayerModal() {
+      $('#addPlayerModal').classList.remove('active');
+    }
+
+    $('#newBtn').addEventListener('click', showAddPlayerModal);
+    $('#newBtnDesktop').addEventListener('click', showAddPlayerModal);
+
+    $('#modalCancel').addEventListener('click', hideAddPlayerModal);
+
+    $('#modalConfirm').addEventListener('click', () => {
+      const name = $('#newPlayerName').value.trim();
+      if (!name) {
         return;
       }
-      createPlayer(name.trim());
+      hideAddPlayerModal();
+      createPlayer(name);
     });
 
-    $('#newBtnDesktop').addEventListener('click', () => {
-      const name = prompt('Enter player name:');
-      if (!name || !name.trim()) {
-        return;
+    $('#newPlayerName').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const name = $('#newPlayerName').value.trim();
+        if (name) {
+          hideAddPlayerModal();
+          createPlayer(name);
+        }
       }
-      createPlayer(name.trim());
+    });
+
+    // Close modal on overlay click
+    $('#addPlayerModal').addEventListener('click', (e) => {
+      if (e.target.id === 'addPlayerModal') {
+        hideAddPlayerModal();
+      }
     });
 
     async function createPlayer(name) {
