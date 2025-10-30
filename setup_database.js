@@ -85,7 +85,7 @@ async function setupDatabase() {
         player_id UUID NOT NULL REFERENCES player(id) ON DELETE CASCADE,
         behavior VARCHAR(255) NOT NULL,
         context TEXT,
-        hand_outcome TINYINT,
+        hand_outcome SMALLINT,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
