@@ -433,7 +433,7 @@
       right: 0;
       bottom: 0;
       background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
+      z-index: 1100;
       align-items: center;
       justify-content: center;
     }
@@ -1088,6 +1088,9 @@
 
     // Modal functions
     function showAddPlayerModal() {
+      // Close drawer if open
+      closeDrawer();
+
       const modal = $('#addPlayerModal');
       const input = $('#newPlayerName');
       modal.classList.add('active');
