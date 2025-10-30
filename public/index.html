@@ -426,7 +426,7 @@
   <script>
     // Check authentication immediately before page renders
     (function() {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         window.location.replace("login.html");
       } else {
@@ -587,8 +587,8 @@
       : window.location.origin;
 
     // Get authentication token (already checked in head)
-    const TOKEN = localStorage.getItem("token");
-    const userEmail = localStorage.getItem("userEmail");
+    const TOKEN = sessionStorage.getItem("token");
+    const userEmail = sessionStorage.getItem("userEmail");
 
     // Display user email
     document.getElementById("userEmail").textContent = userEmail || "";
@@ -596,8 +596,8 @@
     const H = { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" };
 
     function logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userEmail");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("userEmail");
       sessionStorage.setItem("justLoggedOut", "true");
       window.location.href = "login.html";
     }

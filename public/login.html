@@ -328,9 +328,9 @@
 
         const data = await response.json();
 
-        // Store token in localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userEmail", data.user.email);
+        // Store token in sessionStorage (clears when browser closes)
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("userEmail", data.user.email);
 
         // Save credentials if "Remember Me" is checked
         if (rememberMe) {
