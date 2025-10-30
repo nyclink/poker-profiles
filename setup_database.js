@@ -94,6 +94,27 @@ async function setupDatabase() {
 
     console.log('\n✅ All tables created successfully!\n');
 
+    // Insert behavioral cues
+    console.log('📊 Inserting behavioral cues...');
+    await pool.query(`
+      INSERT INTO cue (zone, label) VALUES
+        ('hands', 'Chip fumble'),
+        ('hands', 'Fast grab/throw'),
+        ('voice', 'Overtalking'),
+        ('voice', 'Flat/quiet'),
+        ('eyes', 'Locked stare'),
+        ('eyes', 'Looks away'),
+        ('face', 'Jaw relax'),
+        ('face', 'Lips press'),
+        ('posture', 'Leans in'),
+        ('posture', 'Freezes up'),
+        ('breathing', 'Breath spike'),
+        ('timing', 'Instant bet'),
+        ('timing', 'Long tank')
+      ON CONFLICT DO NOTHING
+    `);
+    console.log('   ✅ Behavioral cues inserted');
+
     // Check if admin user exists
     console.log('🔐 Creating admin user...');
     const existing = await pool.query('SELECT id FROM app_user WHERE email=$1', [EMAIL]);
